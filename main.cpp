@@ -178,10 +178,8 @@ void print_ip_header(const unsigned char *pkt_data)
     }
     if (ih->ip_protocol == 0x17)
     {
-        printf("(UDP)");
-        printf("Src IP : %s\n", inet_ntoa(ih->ip_src_add));
-        printf("(UDP)");
-        printf("Des IP : %s\n", inet_ntoa(ih->ip_des_add));
+        printf("(UDP)\n");
+
     }
 }
 void print_tcp_header(const unsigned char *pkt_data)
