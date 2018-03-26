@@ -135,6 +135,7 @@ int main(int argc, char **argv)
 
     while ((res = pcap_next_ex(use_dev, &header, &pkt_data)) >= 0)
     {
+        if (res == -1 | res == -2) break;
         if (res == 0) continue;
 
         print_ether_header(pkt_data);
