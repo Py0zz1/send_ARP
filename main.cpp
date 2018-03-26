@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     char errbuf[BUF_SIZE];
     char FILTER_RULE[BUF_SIZE]="tcp";
     struct bpf_program rule_struct;
-    int i,dev_num,res;
+    int i,dev_num,pkt_chk;
     struct pcap_pkthdr *header;
     const unsigned char *pkt_data;
 
@@ -133,10 +133,10 @@ int main(int argc, char **argv)
     pcap_freealldevs(alldevs); //캡처 네트워크를 제외한 네트워크 해제
 
 
-    while ((res = pcap_next_ex(use_dev, &header, &pkt_data)) >= 0)
+    while ((pkt_chk = pcap_next_ex(use_dev, &header, &pkt_data)) >= 0)
     {
-        if (res == -1 | res == -2) break;
-        if (res == 0) continue;
+        if (pkt_chk == -1 | pkt_chk == -2) break;
+        if (pkt_chk == 0) continue;
 
         print_ether_header(pkt_data);
         pkt_data += IP_HEADER_JMP;
