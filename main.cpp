@@ -21,13 +21,18 @@ const uint8_t *pkt_data;
 
 void err_print(int err_num);
 void init_dev(char *dev_name);
-void find_mac(const uint8_t pkt_data, char *victim_ip, char *gateway_ip);
+void find_mac(const uint8_t *pkt_data, char *victim_ip, char *gateway_ip);
 
-void cap_pkt()
+void cap_pkt(char *victim_ip,char *gateway_ip)
 {
     int res;
-    cout << "DD";
 
+   while((res = pcap_next_ex(use_dev,&header,&pkt_data))>=0)
+    {
+        if(res == 0) continue;
+        pkt_data += ETHER_HEADER_SIZE;
+        find_mac(pkt_data,victim_ip,gateway_ip);
+    }
 
 
 
@@ -41,23 +46,27 @@ int main(int argc, char **argv)
         return -1;
     }
     init_dev(argv[1]);
-    printf("dadad");
-    cout <<"DDdadasda"<<endl;
-    thread t1(cap_pkt);
-
-     t1.join();
+    thread t1(cap_pkt,argv[2],argv[3]);
+    t1.join();
 
 
 
 
 }
 
-void find_mac(const uint8_t pkt_data,char *victim_ip,char *gateway_ip)
+void find_mac(const uint8_t *pkt_data,char *victim_ip,char *gateway_ip)
 {
 
     struct arp_header *ah;
     ah = (struct arp_header *)pkt_data;
-    cout << victim_ip <<endl;
+    cout << "victim_ip : " << victim_ip<<endl;
+    char *tmp;
+    tmp = inet_ntoa(ah->s_ip);
+    cout << "tmp : "<<tmp << endl;
+    if((memcmp(victim_ip,tmp,strlen(victim_ip)))==0)
+    {
+        cout << "if : "<<tmp << endl;
+    }
 
 }
 
@@ -108,5 +117,6 @@ void err_print(int err_num)
     default:
         cout <<"Unknown ERROR!\n"<<endl;
         break;
+
     }
 }
